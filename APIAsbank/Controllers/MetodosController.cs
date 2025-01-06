@@ -14,9 +14,9 @@ namespace APIAsbank.Controllers
 
         //Variables
         SalidaValidarCliente _salidacliente;
+        SalidaConsultarDeuda _salidaConsulta;
 
-        
-        
+
         [HttpPost("ValidarCliente")]
         public async Task<ActionResult<string>> ValidarCliente(EntradaValidarCliente cliente)
         {
@@ -48,7 +48,7 @@ namespace APIAsbank.Controllers
         [HttpPost("ConsultarDeuda")]
         public async Task<ActionResult<string>> ConsultarDeuda(EntradaConsultarDeuda consultardeuda)
         {
-            SalidaConsultarDeuda _salidaConsulta = new SalidaConsultarDeuda();
+            _salidaConsulta = new SalidaConsultarDeuda();
             try
             {
                 //_context.Productos.Add(objeto);
