@@ -15,7 +15,8 @@ namespace APIAsbank.Controllers
         //Variables
         SalidaValidarCliente _salidacliente;
         SalidaConsultarDeuda _salidaConsulta;
-
+        SalidaPago _salidaPago;
+        SalidaRevertirPago _salidaRevertir;
 
         [HttpPost("ValidarCliente")]
         public async Task<ActionResult<string>> ValidarCliente(EntradaValidarCliente cliente)
@@ -48,33 +49,36 @@ namespace APIAsbank.Controllers
         [HttpPost("ConsultarDeuda")]
         public async Task<ActionResult<string>> ConsultarDeuda(EntradaConsultarDeuda consultardeuda)
         {
+            _unitOfWorkProc = new UnitOfWorkProc();
             _salidaConsulta = new SalidaConsultarDeuda();
-            try
-            {
-                //_context.Productos.Add(objeto);
-                //await _context.SaveChangesAsync();
-                //return Ok("Creado con éxio");
+            _salidaConsulta = _unitOfWorkProc.metodosRepository.ConsultarDeuda(consultardeuda);
 
-                return Ok(_salidaConsulta);
+            return Ok(_salidaConsulta);
 
-            }
-            catch (Exception ex)
-            {
-                return BadRequest("Error durante el proceso de almacenamiento");
-            }
+            //try
+            //{
+            //    //_context.Productos.Add(objeto);
+            //    //await _context.SaveChangesAsync();
+            //    //return Ok("Creado con éxio");
+
+            //    return Ok(_salidaConsulta);
+
+            //}
+            //catch (Exception ex)
+            //{
+            //    return BadRequest("Error durante el proceso de almacenamiento");
+            //}
 
         }
 
         [HttpPost("NotificarPago")]
         public async Task<ActionResult<string>> NotificarPago(EntradaPago pago)
         {
-            SalidaPago _salidaPago = new SalidaPago();
+            _unitOfWorkProc = new UnitOfWorkProc();
+            _salidaPago = new SalidaPago();
             try
             {
-                //_context.Productos.Add(objeto);
-                //await _context.SaveChangesAsync();
-                //return Ok("Creado con éxio");
-
+                _salidaPago = _unitOfWorkProc.metodosRepository.NotificarPago(pago);
                 return Ok(_salidaPago);
 
             }
@@ -88,12 +92,12 @@ namespace APIAsbank.Controllers
         [HttpPost("RevertirPago")]
         public async Task<ActionResult<string>> RevertirPago(EntradaRevertirPago pagorevertir)
         {
-            SalidaRevertirPago _salidaRevertir = new SalidaRevertirPago();
+            _unitOfWorkProc = new UnitOfWorkProc();
+            _salidaRevertir = new SalidaRevertirPago();
             try
             {
-                //_context.Productos.Add(objeto);
-                //await _context.SaveChangesAsync();
-                //return Ok("Creado con éxio");
+
+                _salidaRevertir = _unitOfWorkProc.metodosRepository.RevertirPago(pagorevertir);
 
                 return Ok(_salidaRevertir);
 
