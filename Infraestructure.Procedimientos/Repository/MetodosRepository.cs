@@ -28,7 +28,7 @@ namespace Infraestructure.Procedimientos.Repository
         SalidaPago _salidaPago;
         SalidaRevertirPago _salidaRevertirPago;
 
-
+        
         public SalidaValidarCliente ValidarCliente(EntradaValidarCliente cliente)
         {
             _set = new SettingsData();
@@ -76,8 +76,8 @@ namespace Infraestructure.Procedimientos.Repository
                 else
                 {
                     _salidaCliente.CodigoRespuesta = "16";
-                    _salidaCliente.DescripcionResp = "NO EXISTE";
-                    _salidaCliente.NombreCliente = "NO EXISTE";
+                    _salidaCliente.DescripcionResp = "CLIENTE NO EXISTE";
+                    _salidaCliente.NombreCliente = "CLIENTE NO EXISTE";
                 }
 
 
@@ -99,6 +99,7 @@ namespace Infraestructure.Procedimientos.Repository
         {
             _set = new SettingsData();
             _salidaConsultarDeuda = new SalidaConsultarDeuda();
+           
             try
             {
 
@@ -138,25 +139,27 @@ namespace Infraestructure.Procedimientos.Repository
                 if (resultado != "")
                 {
 
-                    if (_salidaConsultarDeuda.DeudasPendientes.Count < 1)
+                    _salidaConsultarDeuda.DeudasPendientes = (List<DeudasPendientes>)_ListaDeudas(entradaConsultarDeuda);
+
+                    if (_salidaConsultarDeuda.DeudasPendientes.Count()< 1)
                     {
                         _salidaConsultarDeuda.CodigoRespuesta = "22";
                         _salidaConsultarDeuda.DescripcionResp = "CLIENTE SIN DEUDA PENDIENTE";
-                        _salidaConsultarDeuda.DeudasPendientes = null;
+                        _salidaConsultarDeuda.DeudasPendientes = [];
                     }
                     else
                     {
                         _salidaConsultarDeuda.CodigoRespuesta = "00";
                         _salidaConsultarDeuda.DescripcionResp = "OK";
-                        _salidaConsultarDeuda.DeudasPendientes = (List<DeudasPendientes>)_ListaDeudas(entradaConsultarDeuda);
+                        
                     }
 
                 }
                 else
                 {
                     _salidaConsultarDeuda.CodigoRespuesta = "16";
-                    _salidaConsultarDeuda.DescripcionResp = "NO TIENE DEUDAS";
-                    _salidaConsultarDeuda.DeudasPendientes = null;
+                    _salidaConsultarDeuda.DescripcionResp = "CLIENTE NO EXISTE";
+                    _salidaConsultarDeuda.DeudasPendientes = [];
                 }
 
                 return _salidaConsultarDeuda;
@@ -166,7 +169,7 @@ namespace Infraestructure.Procedimientos.Repository
 
                 _salidaConsultarDeuda.CodigoRespuesta = "99";
                 _salidaConsultarDeuda.DescripcionResp = "ERROR "+e.Message;
-                _salidaConsultarDeuda.DeudasPendientes = null;
+                _salidaConsultarDeuda.DeudasPendientes = [];
 
 
                 return _salidaConsultarDeuda;
@@ -293,6 +296,7 @@ namespace Infraestructure.Procedimientos.Repository
 
             _set = new SettingsData();
             _salidaPago=new SalidaPago();
+            string codigoRespuesta = "0";
             try
             {
                 using (SqlConnection connection = new SqlConnection(_set._CadenaConeccion))
@@ -312,32 +316,56 @@ namespace Infraestructure.Procedimientos.Repository
                     comand.Parameters.Add("@formaPago", SqlDbType.VarChar, 2).Value = entradaPago.FormaPago;
                     comand.Parameters.Add("@tipoConsulta", SqlDbType.Int).Value = entradaPago.TipoConsulta;
                     comand.Parameters.Add("@idConsulta", SqlDbType.VarChar, 14).Value = entradaPago.IdConsulta;
-                    comand.Parameters.Add("@numDocumento", SqlDbType.VarChar, 8).Value = entradaPago.NumDocumento;
+                    comand.Parameters.Add("@numDocumento", SqlDbType.VarChar, 16).Value = entradaPago.NumDocumento;
                     comand.Parameters.Add("@importePagado", SqlDbType.Decimal).Value = entradaPago.ImportePagado;
 
                     SqlDataReader sqldataReader = comand.ExecuteReader();
+
+                    
 
                     if (sqldataReader.Read())
                     {
                         _salidaPago.NombreCliente = sqldataReader["apNombres"].ToString();
                         _salidaPago.NumOperacionERP = sqldataReader["idTransaccion"].ToString();
-
+                        codigoRespuesta= sqldataReader["respuestaServicio"].ToString();
                     }
                     connection.Close();
 
                 }
 
-
-                if (_salidaPago.NumOperacionERP == "")
+                if (codigoRespuesta == "25")
+                {
+                    _salidaPago.CodigoRespuesta = "25";
+                    _salidaPago.NombreCliente = "";
+                    _salidaPago.NumOperacionERP = "";
+                    _salidaPago.DescripcionResp = "MONTO DE PAGO INVALIDO";
+                }else if(codigoRespuesta=="20")
+                {
+                    _salidaPago.CodigoRespuesta = "20";
+                    _salidaPago.NombreCliente = "";
+                    _salidaPago.NumOperacionERP = "";
+                    _salidaPago.DescripcionResp = "CUOTA PAGADA YA CANCELADA";
+                }
+                else if(codigoRespuesta=="99")
+                {
+                    _salidaPago.CodigoRespuesta = "99";
+                    _salidaPago.NombreCliente = "";
+                    _salidaPago.NumOperacionERP = "";
+                    _salidaPago.DescripcionResp = "BOLETA NO COINCIDE";
+                }else if (_salidaPago.NumOperacionERP == "")
                 {
                     if (_salidaPago.NombreCliente != "")
                     {
                         _salidaPago.CodigoRespuesta = "99";
+                        _salidaPago.NombreCliente = "";
+                        _salidaPago.NumOperacionERP = "";
                         _salidaPago.DescripcionResp = "ERROR" + _salidaPago.NombreCliente;
                     }
                     else
                     {
                         _salidaPago.CodigoRespuesta = "99";
+                        _salidaPago.NombreCliente = "";
+                        _salidaPago.NumOperacionERP = "";
                         _salidaPago.DescripcionResp = "ERROR GENERAL";
                     }
                 }
@@ -355,6 +383,8 @@ namespace Infraestructure.Procedimientos.Repository
             {
 
                 _salidaPago.CodigoRespuesta = "99";
+                _salidaPago.NombreCliente = "";
+                _salidaPago.NumOperacionERP = "";
                 _salidaPago.DescripcionResp = "ERROR: " + e.Message;
 
                 return _salidaPago;
@@ -366,6 +396,7 @@ namespace Infraestructure.Procedimientos.Repository
         {
             _set = new SettingsData();
             _salidaRevertirPago = new SalidaRevertirPago();
+            string resultadoCodigo = "";
             try
             {
                 using (SqlConnection connection = new SqlConnection(_set._CadenaConeccion))
@@ -383,7 +414,7 @@ namespace Infraestructure.Procedimientos.Repository
                     comand.Parameters.Add("@tipoConsulta", SqlDbType.Int).Value = entradaRevertirPago.TipoConsulta;
                     comand.Parameters.Add("@idConsulta", SqlDbType.VarChar, 14).Value = entradaRevertirPago.IdConsulta;
                     comand.Parameters.Add("@numOperacionBanco", SqlDbType.VarChar, 12).Value = entradaRevertirPago.NumOperacionBanco;
-                    comand.Parameters.Add("@numDocumento", SqlDbType.VarChar, 8).Value = entradaRevertirPago.NumDocumento;
+                    comand.Parameters.Add("@numDocumento", SqlDbType.VarChar, 16).Value = entradaRevertirPago.NumDocumento;
 
                     SqlDataReader sqldataReader = comand.ExecuteReader();
 
@@ -391,23 +422,33 @@ namespace Infraestructure.Procedimientos.Repository
                     {
                         _salidaRevertirPago.NombreCliente = sqldataReader["apNombres"].ToString();
                         _salidaRevertirPago.NumOperacionERP = sqldataReader["idTransaccion"].ToString();
-
+                        resultadoCodigo= sqldataReader["resultadoConsulta"].ToString();
                     }
                     connection.Close();
 
                 }
 
+                if (resultadoCodigo == "68")
+                {
+                    _salidaRevertirPago.CodigoRespuesta = "68";
+                    _salidaRevertirPago.NombreCliente = "";
+                    _salidaRevertirPago.NumOperacionERP = "";
+                    _salidaRevertirPago.DescripcionResp = "TXN ORIG. A ANULAR NO EXISTE";
 
-                if (_salidaRevertirPago.NumOperacionERP == "")
+                }else if (_salidaRevertirPago.NumOperacionERP == "")
                 {
                     if (_salidaRevertirPago.NombreCliente != "")
                     {
                         _salidaRevertirPago.CodigoRespuesta = "99";
-                        _salidaRevertirPago.DescripcionResp = "ERROR" + _salidaPago.NombreCliente;
+                        _salidaRevertirPago.NombreCliente = "";
+                        _salidaRevertirPago.NumOperacionERP = "";
+                        _salidaRevertirPago.DescripcionResp = "ERROR" + _salidaRevertirPago.NombreCliente;
                     }
                     else
                     {
                         _salidaRevertirPago.CodigoRespuesta = "99";
+                        _salidaRevertirPago.NombreCliente = "";
+                        _salidaRevertirPago.NumOperacionERP = "";
                         _salidaRevertirPago.DescripcionResp = "ERROR GENERAL";
                     }
                 }
@@ -425,6 +466,8 @@ namespace Infraestructure.Procedimientos.Repository
             {
 
                 _salidaRevertirPago.CodigoRespuesta = "99";
+                _salidaRevertirPago.NombreCliente = "";
+                _salidaRevertirPago.NumOperacionERP = "";
                 _salidaRevertirPago.DescripcionResp = "ERROR: " + e.Message;
 
                 return _salidaRevertirPago;
