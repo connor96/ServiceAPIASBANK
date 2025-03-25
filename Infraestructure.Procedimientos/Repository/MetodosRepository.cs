@@ -240,7 +240,8 @@ namespace Infraestructure.Procedimientos.Repository
                         _deudaPendienteObjeto.PagoMinimo= string.Format("{0:0.00}", double.Parse(sqldataReader["pagoMinimo"].ToString()));
                         _deudaPendienteObjeto.Periodo = "00";
                         _deudaPendienteObjeto.Anio = int.Parse(sqldataReader["anio"].ToString());
-                        _deudaPendienteObjeto.Cuota = string.Format("{0:0.00}", double.Parse("00"));
+                        //_deudaPendienteObjeto.Cuota = string.Format("{0:0.00}", double.Parse("00"));
+                        _deudaPendienteObjeto.Cuota = "00";
                         _deudaPendienteObjeto.MonedaDoc = "1";
                         _listaDeudas.Add(_deudaPendienteObjeto);
 

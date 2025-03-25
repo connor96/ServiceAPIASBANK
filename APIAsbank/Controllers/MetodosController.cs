@@ -43,7 +43,7 @@ namespace APIAsbank.Controllers
 
 
 
-        [Authorize]
+        
         [HttpPost("ValidarCliente")]
         public async Task<ActionResult<string>> ValidarCliente(EntradaValidarCliente cliente)
         {
@@ -91,7 +91,7 @@ namespace APIAsbank.Controllers
             return _salidaClienteResultado;
         }
 
-        [Authorize]
+       
         [HttpPost("ConsultarDeuda")]
         public async Task<ActionResult<string>> ConsultarDeuda(EntradaConsultarDeuda consultardeuda)
         {
@@ -145,7 +145,7 @@ namespace APIAsbank.Controllers
 
         }
 
-        [Authorize]
+       
         [HttpPost("NotificarPago")]
         public async Task<ActionResult<string>> NotificarPago(EntradaPago pago)
         {
@@ -238,7 +238,7 @@ namespace APIAsbank.Controllers
 
         }
 
-        [Authorize]
+        
         [HttpPost("RevertirPago")]
         public async Task<ActionResult<string>> RevertirPago(EntradaRevertirPago pagorevertir)
         {

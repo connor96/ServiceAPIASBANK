@@ -22,20 +22,20 @@ var configuration = new ConfigurationBuilder()
 builder.Services.AddControllers();
 
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = configuration["JwtSettings:Issuer"],
-            ValidAudience = configuration["JwtSettings:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]))
-        };
-    });
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateLifetime = true,
+//            ValidateIssuerSigningKey = true,
+//            ValidIssuer = configuration["JwtSettings:Issuer"],
+//            ValidAudience = configuration["JwtSettings:Audience"],
+//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]))
+//        };
+//    });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -43,7 +43,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 //Que se pueda consultar desde cualquier lugar
-app.UseCors(c=>c.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+app.UseCors(c=>c.WithOrigins("*").AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
 // Configure the HTTP request pipeline.
 
@@ -51,7 +51,7 @@ app.UseCors(c=>c.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
     app.UseSwaggerUI();
 
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
