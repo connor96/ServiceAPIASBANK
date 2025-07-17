@@ -58,6 +58,10 @@ namespace APIAsbank.Controllers
             {
                 _unitOfWorkProc = new UnitOfWorkProc();
                 _salidacliente = new SalidaValidarCliente();
+
+                //TODO
+
+
                 _salidacliente = _unitOfWorkProc.metodosRepository.ValidarCliente(cliente);
 
                 return Ok(_salidacliente);
@@ -106,9 +110,22 @@ namespace APIAsbank.Controllers
             }
             else
             {
-                _salidaConsulta = _unitOfWorkProc.metodosRepository.ConsultarDeuda(consultardeuda);
+                if(consultardeuda.CodigoBanco=="1020")
+                {
+                     _salidaConsulta = _unitOfWorkProc.metodosRepository.ConsultarDeuda(consultardeuda);
+                     return Ok(_salidaConsulta);
+                }
+                else if(consultardeuda.CodigoBanco=="1022")
+                {
+                    _salidaConsulta = _unitOfWorkProc.metodosRepository.ConsultarDeudaItbk(consultardeuda);
+                    return Ok(_salidaConsulta);
+                }
+                else
+                {
+                    _salidaConsulta = _unitOfWorkProc.metodosRepository.ConsultarDeuda(consultardeuda);
+                    return Ok(_salidaConsulta);
+                }
 
-                return Ok(_salidaConsulta);
             }
         }
 
@@ -162,8 +179,23 @@ namespace APIAsbank.Controllers
             {
                 try
                 {
-                    _salidaPago = _unitOfWorkProc.metodosRepository.NotificarPago(pago);
-                    return Ok(_salidaPago);
+                    if (pago.CodigoBanco=="1020")
+                    {
+                        _salidaPago = _unitOfWorkProc.metodosRepository.NotificarPago(pago);
+                        return Ok(_salidaPago);
+                    }
+                    else if(pago.CodigoBanco == "1022")
+                    {
+                        _salidaPago = _unitOfWorkProc.metodosRepository.NotificarPagoItbk(pago);
+                        return Ok(_salidaPago);
+                    }
+                    else
+                    {
+                        _salidaPago = _unitOfWorkProc.metodosRepository.NotificarPago(pago);
+                        return Ok(_salidaPago);
+                    }
+
+                    
 
                 }
                 catch (Exception ex)

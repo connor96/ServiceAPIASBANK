@@ -12,13 +12,24 @@ namespace Infraestructure.Procedimientos.IRepository
         //Validar Cliente
         SalidaValidarCliente ValidarCliente(EntradaValidarCliente cliente);
 
+
         //Consultar Deuda
         SalidaConsultarDeuda ConsultarDeuda(EntradaConsultarDeuda entradaConsultarDeuda);
         IEnumerable<DeudasPendientes> _ListaDeudas(EntradaConsultarDeuda entradaConsultarDeuda);
 
 
+        SalidaConsultarDeuda ConsultarDeudaItbk(EntradaConsultarDeuda entradaConsultarDeuda);
+        IEnumerable<DeudasPendientes> _ListaDeudasItbk(EntradaConsultarDeuda entradaConsultarDeuda);
+
+
+
         //Registrar pago
         SalidaPago NotificarPago(EntradaPago entradaPago);
+
+        SalidaPago NotificarPagoItbk(EntradaPago entradaPago);
+
+
+
 
         //Extorno
         SalidaRevertirPago RevertirPago(EntradaRevertirPago entradaRevertirPago);
